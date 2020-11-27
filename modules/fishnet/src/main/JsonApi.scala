@@ -130,7 +130,7 @@ object JsonApi {
 
       val npsCeil = 10 * 1000 * 1000
 
-      val desiredNodes    = 3 * 1000 * 1000
+      val desiredNodes    = 2_500_000 // TODO: nnue, more for classical?
       val acceptableNodes = desiredNodes * 0.9
     }
   }
@@ -215,10 +215,14 @@ object JsonApi {
         case a: Analysis =>
           Json.obj(
             "work" -> Json.obj(
-              "type" -> "analysis",
-              "id"   -> a.id
+              "type"  -> "analysis",
+              "id"    -> a.id,
+              "nodes" -> Json.obj(
+                "nnue"      -> a.nodes,
+                "classical" -> a.nodes * 5 / 3
+              )
             ),
-            "nodes"         -> a.nodes,
+            "nodes"         -> a.nodes * 5 / 3, // bc for fishnet 1.x clients without nnue
             "skipPositions" -> a.skipPositions
           )
       }) ++ Json.toJson(work.game).as[JsObject]
